@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+typedef struct
+{
+    int weight;
+    int value;
+    float ratio;
+} Item;
+
+void fractionalKnapsack(Item item[], int n, int capacity)
+{
+    float total = 0;
+
+    // Calculate value/weight ratio
+    for(int i = 0; i < n; i++)
+        item[i].ratio =
+            (float)item[i].value / item[i].weight;
+
+    // Sort by ratio in descending order
+    for(int i = 0; i < n - 1; i++)
+    {
+        for(int j = i + 1; j < n; j++)
+        {
+            if(item[i].ratio < item[j].ratio)
+            {
+                Item temp = item[i];
+                item[i] = item[j];
+                item[j] = temp;
+            }
+        }
+    }
+
+    // Fill the knapsack
+    for(int i = 0; i < n && capacity > 0; i++)
+    {
+        if(item[i].weight <= capacity)
+        {
+            total += item[i].value;
+            capacity -= item[i].weight;
+        }
+        else
+        {
+            total += item[i].ratio * capacity;
+            capacity = 0;
+        }
+    }
+
+    printf("Maximum value = %.2f\n", total);
+}
+
+int main()
+{
+    int weight[] = {10, 20, 30};
+    int value[] = {60, 100, 120};
+
+    int n = 3;
+    int capacity = 50;
+
+    Item item[3];
+
+    for(int i = 0; i < n; i++)
+    {
+        item[i].weight = weight[i];
+        item[i].value = value[i];
+    }
+
+    fractionalKnapsack(item, n, capacity);
+
+    return 0;
+}
